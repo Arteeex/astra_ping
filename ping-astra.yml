@@ -1,8 +1,21 @@
 ---
-- name: Проверка подключения к Astra Linux
+- name: Скачать и установить TrueConf на Astra Linux
   hosts: all
+  become: true
   gather_facts: false
 
+  vars:
+    trueconf_url: "https://download.trueconf.ru/download/client/linux/trueconf_client_astralinux_se17_amd64.deb?v=8.5.5.180"
+    trueconf_deb: "/tmp/trueconf_client_astralinux_se17_amd64.deb"
+
   tasks:
-    - name: Проверить подключение через Ansible
-      ansible.builtin.ping:
+    - name: Скачать TrueConf
+      ansible.builtin.get_url:
+        url: "{{ trueconf_url }}"
+        dest: "{{ trueconf_deb }}"
+        mode: "0644"
+
+    - name: Установить TrueConf
+      ansible.builtin.apt:
+        deb: "{{ trueconf_deb }}"
+        state: present
